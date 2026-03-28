@@ -1,0 +1,21 @@
+# Compiler files
+cache/
+out/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+# docs are tracked in this repo
+
+# Dotenv file
+.env
+web/.env.local
+
+# Frontend build artifacts
+web/node_modules/
+web/.next/
+web/test-results/
+web/tsconfig.tsbuildinfo
