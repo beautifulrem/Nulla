@@ -1,34 +1,49 @@
 "use client";
 
+import Link from "next/link";
 import { useGuardianSetupForm } from "../../hooks/useGuardianSetupForm";
 import { useOnboardGuardian } from "../../hooks/useOnboardGuardian";
 import { OnboardingForm } from "./OnboardingForm";
 import { NextActionsPanel } from "./NextActionsPanel";
 import { GuardianModeCard } from "./GuardianModeCard";
 import { PolicySummary } from "./PolicySummary";
-import { card, cardInner, contentWrap, grid2, pageShell, subtitle, title } from "./ui";
-import { DEMO_OWNER_ADDRESS, DEMO_SAFE_ADDRESS, DEMO_POLICY_TITLE } from "../../hooks/guardianTypes";
+import { card, cardGlow, cardInner, contentWrap, eyebrow, grid2, grid3, monoWrap, pageShell, primaryButton, subtitle, title } from "./ui";
+import { DEMO_OWNER_ADDRESS, DEMO_POLICY_TITLE, DEMO_SAFE_ADDRESS } from "../../hooks/guardianTypes";
+import { DEFAULT_RISK_SPENDER } from "../../lib/constants";
 
 export function GuardianSetupScreen() {
   const { form, updateField, updateListField, addListItem, removeListItem } = useGuardianSetupForm({
     safeAddress: DEMO_SAFE_ADDRESS,
     ownerAddress: DEMO_OWNER_ADDRESS,
+    tokenEth: process.env.NEXT_PUBLIC_ETH_TOKEN_ADDRESS ?? "",
+    tokenBase: process.env.NEXT_PUBLIC_BASE_TOKEN_ADDRESS ?? "",
+    blacklist: [DEFAULT_RISK_SPENDER],
   });
   const { data, error, loading, submit } = useOnboardGuardian();
-  const steps = data?.nextActions ?? [];
 
   return (
     <div style={pageShell}>
       <main style={contentWrap}>
-        <div style={{ display: "grid", gap: 18, marginBottom: 20 }}>
-          <div style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(229,238,252,0.65)" }}>
-            Guardian onboarding
+        <section style={{ ...card, padding: 0, marginBottom: 22 }}>
+          <div style={cardGlow} />
+          <div style={{ ...cardInner, position: "relative", display: "grid", gap: 20 }}>
+            <div style={eyebrow}>Guardian onboarding</div>
+            <h1 style={{ margin: 0, fontSize: "clamp(34px, 5vw, 62px)", lineHeight: 0.95, letterSpacing: "-0.06em", fontFamily: "var(--font-heading)" }}>
+              Turn one Safe into a cross-chain security control room.
+            </h1>
+            <p style={{ margin: 0, maxWidth: 860, fontSize: 17, lineHeight: 1.75, color: "var(--text-secondary)" }}>
+              This setup flow packages Ethereum Sepolia, Base Sepolia, and Lasna into one
+              Guardian Mode onboarding. The owner signs a short set of exact Safe actions instead
+              of learning each chain separately.
+            </p>
+            <div style={grid3}>
+              <SummaryChip title="Protected Safe" value={DEMO_SAFE_ADDRESS} />
+              <SummaryChip title="Owner" value={DEMO_OWNER_ADDRESS} />
+              <SummaryChip title="Policy" value={DEMO_POLICY_TITLE} />
+            </div>
           </div>
-          <h1 style={{ margin: 0, fontSize: "clamp(30px, 5vw, 54px)", letterSpacing: "-0.05em" }}>Enable Guardian Mode once.</h1>
-          <p style={{ margin: 0, maxWidth: 820, fontSize: 16, lineHeight: 1.7, color: "rgba(229,238,252,0.74)" }}>
-            This form packages two Safe chains into one onboarding flow. The backend returns the exact chain-specific actions.
-          </p>
-        </div>
+        </section>
+
         <div style={grid2}>
           <OnboardingForm
             form={form}
@@ -39,33 +54,81 @@ export function GuardianSetupScreen() {
             onSubmit={() => void submit(form)}
             submitting={loading}
           />
-          <div style={{ display: "grid", gap: 16 }}>
-            <GuardianModeCard armed={Boolean(data?.profileId)} profileId={data?.profileId ?? undefined} statusLabel={error ?? "Awaiting onboarding submission"} />
+          <div style={{ display: "grid", gap: 18 }}>
+            <GuardianModeCard
+              armed={Boolean(data?.profileId)}
+              profileId={data?.profileId ?? undefined}
+              statusLabel={error ?? "Waiting for onboarding submission"}
+              badgeMode="MONITOR"
+            />
             <PolicySummary safeAddress={form.safeAddress} ownerAddress={form.ownerAddress} policyTitle={DEMO_POLICY_TITLE} />
+            <section style={card}>
+              <div style={cardGlow} />
+              <div style={{ ...cardInner, position: "relative", display: "grid", gap: 12 }}>
+                <div style={eyebrow}>Deployment preview</div>
+                <h2 style={title}>Three-chain control path</h2>
+                <p style={subtitle}>
+                  The onboarding output will wire a Safe module, a Safe guard, and a Lasna policy
+                  engine into one cross-chain protection loop.
+                </p>
+                <div style={{ ...grid3, marginTop: 4 }}>
+                  <MiniPanel title="Ethereum Sepolia" body="Module + guard for peer-chain shield and revoke callbacks." />
+                  <MiniPanel title="Lasna" body="Reactive policy engine that processes approvals and schedules shield recovery." />
+                  <MiniPanel title="Base Sepolia" body="Module + guard for origin-chain revoke and peer-chain shield." />
+                </div>
+              </div>
+            </section>
           </div>
         </div>
-        <div style={{ marginTop: 16, display: "grid", gap: 16 }}>
+
+        <div style={{ marginTop: 18 }}>
           <NextActionsPanel result={data} safeAddress={form.safeAddress} ownerAddress={form.ownerAddress} />
-          <section style={card}>
-            <div style={cardInner}>
-              <h2 style={title}>Ready Steps</h2>
-              <p style={subtitle}>These are the Safe actions the owner still needs to sign.</p>
-              <div style={{ marginTop: 12, display: "grid", gap: 10 }}>
-                {steps.length ? (
-                  steps.map((step) => (
-                    <div key={`${step.chainId}:${step.title}`} style={{ padding: 12, borderRadius: 16, background: "rgba(255,255,255,0.04)" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700 }}>{step.title}</div>
-                      <div style={{ marginTop: 4, fontSize: 12, color: "rgba(229,238,252,0.68)" }}>{step.description}</div>
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ fontSize: 13, color: "rgba(229,238,252,0.6)" }}>Submit the form to see the next Safe actions.</div>
-                )}
-              </div>
-            </div>
-          </section>
         </div>
+
+        {data?.profileId ? (
+          <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
+            <Link href={`/guardian/${data.profileId}`} style={primaryButton}>
+              Open security console
+            </Link>
+          </div>
+        ) : null}
       </main>
+    </div>
+  );
+}
+
+function SummaryChip({ title: label, value }: { title: string; value: string }) {
+  return (
+    <div
+      style={{
+        borderRadius: 18,
+        border: "1px solid rgba(255,255,255,0.08)",
+        background: "rgba(255,255,255,0.035)",
+        padding: 14,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)" }}>{label}</div>
+      <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-primary)", ...monoWrap }}>{value}</div>
+    </div>
+  );
+}
+
+function MiniPanel({ title: heading, body }: { title: string; body: string }) {
+  return (
+    <div
+      style={{
+        borderRadius: 18,
+        border: "1px solid rgba(255,255,255,0.08)",
+        background: "rgba(7, 14, 29, 0.55)",
+        padding: 14,
+        display: "grid",
+        gap: 8,
+      }}
+    >
+      <div style={{ fontSize: 13, fontWeight: 800 }}>{heading}</div>
+      <div style={{ fontSize: 12, lineHeight: 1.6, color: "var(--text-secondary)" }}>{body}</div>
     </div>
   );
 }

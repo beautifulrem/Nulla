@@ -1,17 +1,41 @@
 :root {
   color-scheme: dark;
+  --bg-deep: #06101f;
+  --bg-surface: #0a1730;
+  --bg-shell: #0c1424;
+  --panel-soft: rgba(255, 255, 255, 0.042);
+  --border-soft: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(160, 202, 255, 0.16);
+  --text-primary: #edf4ff;
+  --text-secondary: rgba(237, 244, 255, 0.76);
+  --text-muted: rgba(237, 244, 255, 0.54);
+  --accent-cool: #74d7ff;
+  --accent-hot: #ffb56b;
+  --accent-risk: #ff705d;
+  --accent-safe: #67efab;
+  --font-heading: var(--font-space-grotesk, "Space Grotesk", system-ui, sans-serif);
+  --font-body: var(--font-space-grotesk, "Space Grotesk", system-ui, sans-serif);
+  --font-mono: var(--font-ibm-plex-mono, "IBM Plex Mono", ui-monospace, monospace);
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
+html {
+  min-height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+}
+
 body {
   margin: 0;
-  min-height: 100%;
-  background: #0b1020;
-  color: #e5eefc;
+  min-height: 100vh;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -23,4 +47,50 @@ button,
 input,
 textarea {
   font: inherit;
+}
+
+button {
+  transition:
+    transform 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    opacity 140ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(116, 215, 255, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(116, 215, 255, 0.18),
+    0 0 0 6px rgba(116, 215, 255, 0.08);
+}
+
+::selection {
+  background: rgba(116, 215, 255, 0.24);
+}
+
+.glass-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.14) 30%, rgba(255, 255, 255, 0.14) 70%, transparent 100%);
+}
+
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.22) 1px, transparent 0);
+  background-size: 20px 20px;
+  mix-blend-mode: soft-light;
 }

@@ -27,8 +27,12 @@ export async function switchWalletChain(chainId: number) {
 }
 
 export async function executeSafeNextAction(action: NextAction, safeAddress: string, ownerAddress: string): Promise<string> {
+  const ethereum = (window as Window & { ethereum?: BrowserEthereum }).ethereum;
+  if (!ethereum) {
+    return executeSafeNextActionViaServer(action, safeAddress, ownerAddress);
+  }
+
   const { default: Safe } = await import("@safe-global/protocol-kit");
-  const ethereum = getEthereumProvider();
   await switchWalletChain(action.chainId);
 
   const protocolKit = await Safe.init({
@@ -50,4 +54,31 @@ export async function executeSafeNextAction(action: NextAction, safeAddress: str
   const signed = await protocolKit.signTransaction(safeTransaction);
   const result = await protocolKit.executeTransaction(signed);
   return result.hash;
+}
+
+async function executeSafeNextActionViaServer(action: NextAction, safeAddress: string, ownerAddress: string): Promise<string> {
+  const response = await fetch("/api/demo/safe-action", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      safeAddress,
+      ownerAddress,
+      action: {
+        chainId: action.chainId,
+        label: action.label,
+        description: action.description,
+        to: action.to,
+        data: action.data,
+        value: action.value.toString(),
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(body?.error ?? `Server-side Safe execution failed with status ${response.status}`);
+  }
+
+  const payload = (await response.json()) as { hash: string };
+  return payload.hash;
 }

@@ -1,5 +1,6 @@
 import { GuardianProfileScreen } from "../../../components/guardian/GuardianProfileScreen";
 
-export default function Page({ params }: { params: { profileId: string } }) {
-  return <GuardianProfileScreen profileId={params.profileId} />;
+export default async function Page({ params }: { params: Promise<{ profileId: string }> }) {
+  const { profileId } = await params;
+  return <GuardianProfileScreen profileId={profileId} />;
 }

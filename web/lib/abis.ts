@@ -447,6 +447,27 @@ export const reactiveCrossChainFirewallAbi = [
     ]
   },
   {
+    type: "function",
+    name: "cronTickDivisor",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }]
+  },
+  {
+    type: "function",
+    name: "shieldDurationTicks",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint64" }]
+  },
+  {
+    type: "function",
+    name: "activePendingShieldCount",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }]
+  },
+  {
     type: "event",
     name: "RiskDetected",
     anonymous: false,

@@ -1,10 +1,16 @@
 import { useApiResource } from "./useApiResource";
-import { DEFAULT_ALERTS, TimelineEntry } from "./guardianTypes";
+import type { GuardianActivityResponse } from "../lib/types";
+
+const FALLBACK_ACTIVITY: GuardianActivityResponse = {
+  profileId: "0x0000000000000000000000000000000000000000000000000000000000000000",
+  alerts: [],
+  timeline: []
+};
 
 export function useGuardianActivity(profileId: string | null) {
-  return useApiResource<TimelineEntry[]>(
+  return useApiResource<GuardianActivityResponse>(
     profileId ? `/api/guardian/${profileId}/activity` : null,
-    DEFAULT_ALERTS as unknown as TimelineEntry[],
+    FALLBACK_ACTIVITY,
     5000,
   );
 }

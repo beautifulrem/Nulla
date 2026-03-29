@@ -45,7 +45,13 @@ const moduleEvents = {
   }
 } as const;
 
-export async function fetchApprovalLogs(chainId: number, token: Address, safeAddress: Address, fromBlock?: bigint) {
+export async function fetchApprovalLogs(
+  chainId: number,
+  token: Address,
+  safeAddress: Address,
+  fromBlock?: bigint,
+  toBlock: bigint | "latest" = "latest"
+) {
   const client = getPublicClient(chainId);
   return client.getLogs({
     address: token,
@@ -59,7 +65,7 @@ export async function fetchApprovalLogs(chainId: number, token: Address, safeAdd
       ]
     },
     fromBlock,
-    toBlock: "latest",
+    toBlock,
     args: { owner: safeAddress }
   });
 }
@@ -73,13 +79,17 @@ export async function fetchReactiveLogs(chainId: number, reactiveAddress: Addres
   });
 }
 
-export async function fetchRiskDetectedLogs(reactiveAddress: Address, fromBlock?: bigint) {
+export async function fetchRiskDetectedLogs(
+  reactiveAddress: Address,
+  fromBlock?: bigint,
+  toBlock: bigint | "latest" = "latest"
+) {
   const client = getPublicClient(LASNA_CHAIN_ID);
   return client.getLogs({
     address: reactiveAddress,
     event: riskDetectedEvent,
     fromBlock,
-    toBlock: "latest"
+    toBlock
   });
 }
 
@@ -87,18 +97,31 @@ export async function fetchModuleEventLogs(
   chainId: number,
   moduleAddress: Address,
   eventName: "ApprovalRevoked" | "ShieldEntered" | "ShieldExited",
-  fromBlock?: bigint
+  fromBlock?: bigint,
+  toBlock: bigint | "latest" = "latest"
 ) {
   const client = getPublicClient(chainId);
   return client.getLogs({
     address: moduleAddress,
     event: moduleEvents[eventName],
     fromBlock,
-    toBlock: "latest"
+    toBlock
   });
 }
 
-export async function getLookbackFromBlock(chainId: number, lookback = 50_000n) {
+function defaultLookbackRange(chainId: number) {
+  switch (chainId) {
+    case ETH_SEPOLIA_CHAIN_ID:
+    case BASE_SEPOLIA_CHAIN_ID:
+      return 9n;
+    case LASNA_CHAIN_ID:
+      return 29_999n;
+    default:
+      return 999n;
+  }
+}
+
+export async function getLookbackFromBlock(chainId: number, lookback = defaultLookbackRange(chainId)) {
   const client = getPublicClient(chainId);
   const latest = await client.getBlockNumber();
   return latest > lookback ? latest - lookback : 0n;

@@ -9,15 +9,18 @@ type OnboardState = {
   reset: () => void;
 };
 
-const FALLBACK_RESULT: OnboardGuardianResult = {
-  profileId: "0x0000000000000000000000000000000000000000000000000000000000000000",
-  moduleEth: "",
-  moduleBase: "",
-  guardEth: "",
-  guardBase: "",
-  reactiveLasna: "",
-  nextActions: [],
-};
+function sanitizeInput(input: OnboardGuardianInput): OnboardGuardianInput {
+  return {
+    ...input,
+    safeAddress: input.safeAddress.trim(),
+    ownerAddress: input.ownerAddress.trim(),
+    tokenEth: input.tokenEth.trim(),
+    tokenBase: input.tokenBase.trim(),
+    cap: input.cap.trim(),
+    allowlist: input.allowlist.map((value) => value.trim()).filter(Boolean),
+    blacklist: input.blacklist.map((value) => value.trim()).filter(Boolean),
+  };
+}
 
 export function useOnboardGuardian(): OnboardState {
   const [data, setData] = useState<OnboardGuardianResult | null>(null);
@@ -29,14 +32,24 @@ export function useOnboardGuardian(): OnboardState {
     setError(null);
 
     try {
+      const payloadInput = sanitizeInput(input);
       const response = await fetch("/api/guardian/onboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify(payloadInput),
       });
 
       if (!response.ok) {
-        throw new Error(`Onboarding failed with status ${response.status}`);
+        let message = `Onboarding failed with status ${response.status}`;
+        try {
+          const body = (await response.json()) as { error?: string };
+          if (body.error) {
+            message = body.error;
+          }
+        } catch {
+          // Ignore JSON parsing for non-JSON failures.
+        }
+        throw new Error(message);
       }
 
       const payload = (await response.json()) as OnboardGuardianResult;
@@ -45,8 +58,8 @@ export function useOnboardGuardian(): OnboardState {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown onboarding error";
       setError(message);
-      setData(FALLBACK_RESULT);
-      return FALLBACK_RESULT;
+      setData(null);
+      return null;
     } finally {
       setLoading(false);
     }

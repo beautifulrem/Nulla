@@ -45,8 +45,11 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: z.string().optional(),
   NEXT_PUBLIC_LASNA_RPC_URL: z.string().optional(),
   NEXT_PUBLIC_NULLA_REGISTRY_ADDRESS: addressSchema.optional(),
+  NEXT_PUBLIC_ETH_TOKEN_ADDRESS: addressSchema.optional(),
+  NEXT_PUBLIC_BASE_TOKEN_ADDRESS: addressSchema.optional(),
   NEXT_PUBLIC_DEMO_SAFE_SHARED_ADDRESS: addressSchema.default("0x23BB5F9b7D50f2ecdE6305E6cdB71c1e7Ba698F0"),
-  NEXT_PUBLIC_DEMO_SAFE_OWNER_ADDRESS: addressSchema.default("0xbA64397d50D71fE0c38a86B51fc77BedB580C8A4")
+  NEXT_PUBLIC_DEMO_SAFE_OWNER_ADDRESS: addressSchema.default("0xbA64397d50D71fE0c38a86B51fc77BedB580C8A4"),
+  NEXT_PUBLIC_DEMO_PROFILE_ID: z.string().regex(/^0x[a-fA-F0-9]{64}$/).optional()
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

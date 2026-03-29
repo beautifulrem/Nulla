@@ -1,42 +1,90 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { DEMO_OWNER_ADDRESS, DEMO_SAFE_ADDRESS } from "../../hooks/guardianTypes";
-import { card, cardInner, mono, pageShell, subtitle, title } from "./ui";
+import {
+  card,
+  cardGlow,
+  cardInner,
+  contentWrap,
+  eyebrow,
+  formatAddress,
+  grid3,
+  heroCopy,
+  heroGrid,
+  heroTitle,
+  metricLabel,
+  metricValue,
+  monoWrap,
+  pageShell,
+  panelSoft,
+  primaryButton,
+  secondaryButton,
+  subtitle,
+  title,
+} from "./ui";
+
+const MAINLINE_RC = process.env.NEXT_PUBLIC_REACTIVE_LASNA_ADDRESS ?? "Pending";
+const RISK_SPENDER = "0x301E4F2bA24b4C009BfDCc5F7F192f6A0f9C8e8d";
 
 export function LandingHero() {
   return (
     <div style={pageShell}>
-      <main style={{ ...cardInner, maxWidth: 1240, margin: "0 auto", paddingTop: 48 }}>
-        <section
-          style={{
-            ...card,
-            padding: 28,
-            background:
-              "linear-gradient(135deg, rgba(245,184,122,0.16) 0%, rgba(138,211,255,0.12) 45%, rgba(8,15,34,0.82) 100%)",
-          }}
-        >
-          <div style={{ display: "grid", gap: 18 }}>
-            <div style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(229,238,252,0.65)" }}>
-              Nulla Cross-chain Shield
+      <main style={contentWrap}>
+        <section style={{ ...card, padding: 0 }}>
+          <div style={cardGlow} />
+          <div style={{ ...cardInner, padding: 28 }}>
+            <div style={heroGrid}>
+              <div style={eyebrow}>
+                <span style={statusDot("var(--accent-safe)")} />
+                <span>Nulla Cross-Chain Security Control</span>
+              </div>
+              <h1 style={heroTitle}>One Guardian Mode for two Safe chains.</h1>
+              <p style={heroCopy}>
+                Nulla turns the same Safe address on Ethereum Sepolia and Base Sepolia into one
+                cross-chain security system. A risky approval on one chain can revoke locally and
+                tighten the other chain immediately through Reactive Lasna.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <Link href="/guardian/setup" style={primaryButton}>
+                  Enable Guardian Mode
+                </Link>
+                <Link href="/demo" style={secondaryButton}>
+                  Open Demo Flow
+                </Link>
+              </div>
             </div>
-            <h1 style={{ margin: 0, fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 0.95, letterSpacing: "-0.05em" }}>
-              One Guardian Mode for two Safe chains.
-            </h1>
-            <p style={{ margin: 0, maxWidth: 760, fontSize: 18, lineHeight: 1.7, color: "rgba(229,238,252,0.76)" }}>
-              Same Safe address, same owner, one reactive policy layer. A risk on Base Sepolia can revoke locally and
-              tighten Ethereum Sepolia immediately.
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-              <Link href="/guardian/setup" style={linkButton}>
-                Start onboarding
-              </Link>
-              <Link href="/demo" style={secondaryLinkButton}>
-                Open demo flow
-              </Link>
+            <div style={{ ...grid3, marginTop: 24 }}>
+              <MetricCard label="Protected Chains" value="2" detail="Ethereum Sepolia + Base Sepolia" />
+              <MetricCard label="Control Layer" value="Lasna" detail={formatAddress(MAINLINE_RC, 8, 6)} />
+              <MetricCard label="Risk Spender" value={formatAddress(RISK_SPENDER, 7, 5)} detail="Blacklisted test address" />
             </div>
-            <div style={{ display: "grid", gap: 6, fontSize: 13, color: "rgba(229,238,252,0.66)" }}>
-              <div>Safe: <span style={mono}>{DEMO_SAFE_ADDRESS}</span></div>
-              <div>Owner: <span style={mono}>{DEMO_OWNER_ADDRESS}</span></div>
+            <div style={{ ...grid3, marginTop: 18 }}>
+              <FactCard title="Shared Safe" value={DEMO_SAFE_ADDRESS} />
+              <FactCard title="Safe Owner" value={DEMO_OWNER_ADDRESS} />
+              <FactCard title="Operating Model" value="Detect -> React -> Revoke + Shield" />
+            </div>
+            <div style={{ marginTop: 24, display: "grid", gap: 14 }}>
+              <div style={eyebrow}>
+                <span style={statusDot("var(--accent-cool)")} />
+                <span>System Flow</span>
+              </div>
+              <div style={grid3}>
+                <FlowCard
+                  step="01"
+                  title="Detect On Origin"
+                  body="Watch Safe approvals on Ethereum Sepolia and Base Sepolia for the configured risky spender."
+                />
+                <FlowCard
+                  step="02"
+                  title="React On Lasna"
+                  body="A single Reactive contract evaluates the risk and decides the revoke + shield response path."
+                />
+                <FlowCard
+                  step="03"
+                  title="Protect Across Chains"
+                  body="The source chain approval is revoked while the peer chain enters Shield Mode until recovery."
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -45,22 +93,55 @@ export function LandingHero() {
   );
 }
 
-const linkButton: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 48,
-  padding: "0 18px",
-  borderRadius: 16,
-  background: "linear-gradient(135deg, #f5b87a 0%, #8ad3ff 100%)",
-  color: "#0b1020",
-  fontWeight: 700,
-  textDecoration: "none",
-};
+function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <section style={panelSoft}>
+      <div style={metricLabel}>{label}</div>
+      <div style={metricValue}>{value}</div>
+      <div style={{ marginTop: 8, fontSize: 13, color: "var(--text-secondary)" }}>{detail}</div>
+    </section>
+  );
+}
 
-const secondaryLinkButton: CSSProperties = {
-  ...linkButton,
-  background: "rgba(255,255,255,0.07)",
-  color: "#e5eefc",
-  border: "1px solid rgba(255,255,255,0.12)",
-};
+function FactCard({ title: label, value }: { title: string; value: string }) {
+  return (
+    <section
+      style={{
+        ...panelSoft,
+        display: "grid",
+        gap: 8,
+        minHeight: 106,
+      }}
+    >
+      <div style={metricLabel}>{label}</div>
+      <div style={{ fontSize: 14, lineHeight: 1.55, color: "var(--text-primary)", ...monoWrap }}>{value}</div>
+    </section>
+  );
+}
+
+function FlowCard({ step, title: heading, body }: { step: string; title: string; body: string }) {
+  return (
+    <article
+      style={{
+        ...panelSoft,
+        position: "relative",
+        overflow: "hidden",
+        minHeight: 160,
+      }}
+    >
+      <div style={{ ...metricLabel, color: "var(--accent-cool)" }}>{step}</div>
+      <h2 style={{ ...title, marginTop: 14 }}>{heading}</h2>
+      <p style={{ ...subtitle, marginTop: 10 }}>{body}</p>
+    </article>
+  );
+}
+
+function statusDot(color: string): CSSProperties {
+  return {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    background: color,
+    boxShadow: `0 0 0 6px color-mix(in srgb, ${color} 18%, transparent)`,
+  };
+}

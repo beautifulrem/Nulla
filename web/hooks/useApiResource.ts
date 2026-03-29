@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type ApiResourceState<T> = {
   data: T | null;
@@ -12,16 +12,20 @@ export function useApiResource<T>(url: string | null, fallback: T, refreshMs = 0
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(Boolean(url));
   const [tick, setTick] = useState(0);
+  const fallbackRef = useRef(fallback);
+
+  fallbackRef.current = fallback;
 
   useEffect(() => {
     if (!url) {
-      setData(fallback);
+      setData(fallbackRef.current);
       setLoading(false);
       return;
     }
 
     let active = true;
     const controller = new AbortController();
+    let refreshTimer: number | undefined;
     setLoading(true);
 
     fetch(url, { signal: controller.signal })
@@ -42,33 +46,32 @@ export function useApiResource<T>(url: string | null, fallback: T, refreshMs = 0
         if (!active) {
           return;
         }
+        if (err instanceof DOMException && err.name === "AbortError") {
+          return;
+        }
         const message = err instanceof Error ? err.message : "Unknown request error";
         setError(message);
-        setData(fallback);
+        setData((current) => current ?? fallbackRef.current);
       })
       .finally(() => {
         if (active) {
           setLoading(false);
+          if (refreshMs > 0) {
+            refreshTimer = window.setTimeout(() => {
+              setTick((value) => value + 1);
+            }, refreshMs);
+          }
         }
       });
 
     return () => {
       active = false;
+      if (refreshTimer) {
+        window.clearTimeout(refreshTimer);
+      }
       controller.abort();
     };
-  }, [fallback, url, tick]);
-
-  useEffect(() => {
-    if (!url || refreshMs <= 0) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setTick((value) => value + 1);
-    }, refreshMs);
-
-    return () => window.clearInterval(timer);
-  }, [refreshMs, url]);
+  }, [refreshMs, url, tick]);
 
   return {
     data,

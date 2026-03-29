@@ -1,7 +1,7 @@
 "use client";
 
 import { DEMO_POLICY_TITLE } from "../../hooks/guardianTypes";
-import { card, cardInner, subtitle, title } from "./ui";
+import { card, cardGlow, cardInner, eyebrow, formatAddress, monoWrap, subtitle, title } from "./ui";
 
 type Props = {
   policyTitle?: string;
@@ -12,13 +12,47 @@ type Props = {
 export function PolicySummary({ policyTitle = DEMO_POLICY_TITLE, safeAddress, ownerAddress }: Props) {
   return (
     <section style={card}>
-      <div style={cardInner}>
-        <h2 style={title}>Policy Summary</h2>
-        <p style={subtitle}>{policyTitle}</p>
-        <div style={{ marginTop: 16, display: "grid", gap: 10, fontSize: 13 }}>
-          <div>Safe: {safeAddress}</div>
-          <div>Controller: {ownerAddress}</div>
-          <div>Scope: Ethereum Sepolia + Base Sepolia via one Lasna policy engine</div>
+      <div style={cardGlow} />
+      <div style={{ ...cardInner, position: "relative", display: "grid", gap: 16 }}>
+        <div style={eyebrow}>Policy Summary</div>
+        <div>
+          <h2 style={title}>{policyTitle}</h2>
+          <p style={subtitle}>
+            One Lasna policy engine watches approval risk and coordinates source-chain revoke with
+            peer-chain Shield Mode.
+          </p>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gap: 12,
+            borderRadius: 20,
+            border: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(255,255,255,0.035)",
+            padding: 16,
+            fontSize: 13,
+          }}
+        >
+          <div>
+            <div style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", fontSize: 11 }}>
+              Protected Safe
+            </div>
+            <div style={{ marginTop: 6, ...monoWrap }}>{formatAddress(safeAddress, 8, 6)}</div>
+          </div>
+          <div>
+            <div style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", fontSize: 11 }}>
+              Controller
+            </div>
+            <div style={{ marginTop: 6, ...monoWrap }}>{formatAddress(ownerAddress, 8, 6)}</div>
+          </div>
+          <div>
+            <div style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.12em", fontSize: 11 }}>
+              Scope
+            </div>
+            <div style={{ marginTop: 6, color: "var(--text-secondary)" }}>
+              Ethereum Sepolia + Base Sepolia via one Reactive Lasna control layer.
+            </div>
+          </div>
         </div>
       </div>
     </section>

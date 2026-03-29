@@ -118,6 +118,7 @@ export interface GuardianStatusResponse {
   shieldBase: boolean;
   lastAlert?: AlertRecord;
   policySummary: string;
+  lasnaRuntime?: LasnaRuntimeInfo;
 }
 
 export interface GuardianActivityResponse {
@@ -129,4 +130,13 @@ export interface GuardianActivityResponse {
 export interface GuardianContractsResponse {
   profileId: Hex;
   contracts: ContractAddressBook;
+}
+
+export interface LasnaRuntimeInfo {
+  currentBlockNumber: bigint;
+  currentTick: bigint;
+  cronTickDivisor: bigint;
+  shieldDurationTicks: bigint;
+  secondsPerBlock: number;
+  updatedAt: string;
 }
