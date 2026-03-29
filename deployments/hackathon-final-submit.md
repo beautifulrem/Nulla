@@ -168,8 +168,6 @@
 
 ## Final submission hashes
 
-Reactive hashes below were matched from the Lasna Reactscan contract transaction view for the active Reactive contract. They correspond to the rows whose `ORIGIN` column points to the risky approval transactions listed in the `Origin` section of each run.
-
 ### Funding
 
 - `0x54254531576c37b7a4edfc2452b2ef28dc0414b82020a140eb8e6931213a8561` — fund Ethereum module
