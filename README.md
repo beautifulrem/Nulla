@@ -23,7 +23,7 @@
   <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-f1c40f">
   <img alt="Chains Ethereum Sepolia + Base Sepolia" src="https://img.shields.io/badge/Chains-Ethereum%20Sepolia%20%2B%20Base%20Sepolia-2980b9">
   <img alt="Reactive Network Lasna" src="https://img.shields.io/badge/Reactive-Lasna-8e44ad">
-  <img alt="Safe Smart Wallet" src="https://img.shields.io/badge/Safe-approval%20firewall-27ae60">
+  <img alt="Safe Smart Wallet" src="https://img.shields.io/badge/Safe-smart%20wallet-27ae60">
   <img alt="Frontend Next.js" src="https://img.shields.io/badge/Frontend-Next.js-111111">
 </p>
 
