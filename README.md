@@ -28,7 +28,7 @@
 </p>
 
 <p>
-  Nulla is a cross-chain approval firewall for Safe. It uses a single Reactive contract on Lasna to watch risky approval activity across Ethereum Sepolia and Base Sepolia, revoke the approval on the source chain, and push the peer chain into Shield Mode.
+  Nulla is a cross-chain Safe protection workflow, not just a generic "firewall" label. You first arm a Safe with Guardian Mode, then Nulla watches approval risk across two chains, reacts on Lasna, revokes the risky approval on the source chain, and immediately hardens the peer chain with Shield Mode.
 </p>
 
 <p>
@@ -41,11 +41,43 @@
 
 ## Table of Contents
 
+- [⚙️ What Nulla Does](#what-nulla-does)
+- [🧩 Extensibility](#extensibility)
 - [🚨 Why Nulla](#why-nulla)
 - [🧱 Stack](#stack)
 - [🔄 Core Demo Flow](#core-demo-flow)
 - [📚 Guides](#guides)
 - [🛠 Local Commands](#local-commands)
+
+## What Nulla Does
+
+Nulla protects the same Safe across Ethereum Sepolia and Base Sepolia with one shared workflow:
+
+1. **Arm the Safe with Guardian Mode**
+   - The owner enables the Safe module and guard on both chains.
+   - This turns one Safe into a cross-chain security control room.
+2. **Detect a risky approval**
+   - If the Safe approves a blacklisted or over-limit spender on either chain, that approval becomes a security event.
+3. **React on Lasna**
+   - A single Reactive contract on Lasna receives the signal and evaluates the policy.
+4. **Contain the incident across both chains**
+   - On the source chain, Nulla revokes the risky approval back to `0`.
+   - On the peer chain, Nulla pushes the Safe into `Shield Mode`.
+5. **Recover safely**
+   - Shield can be cleared manually by the operator.
+   - Or it can expire automatically after the recovery window.
+
+This means one approval incident on one chain immediately changes the security posture of the other chain too.
+
+## Extensibility
+
+The current demo focuses on ERC-20 approval risk, but the architecture is broader than one hardcoded rule:
+
+- policies can be updated through the subscription and control layer
+- spender rules can be allowlisted, blacklisted, or capped
+- the Reactive layer can coordinate more than one callback action
+- the same pattern can be extended to more tokens, more chains, and richer risk signals
+- Safe remains the local execution layer, while Reactive remains the cross-chain coordination layer
 
 ## Why Nulla
 
