@@ -93,9 +93,20 @@
 
 ### Base Sepolia risk -> Base revoke -> Ethereum Shield -> manual Shield exit
 
+#### Origin
+
 - Base risky approval:
   - Tx hash: `0xa2fbe10030e6569a81dca46fc465a2d938ce9e23ba950a95fe922d333a6d9e5d`
   - Shows: the shared Safe approved the blacklisted spender on Base Sepolia
+
+#### Reactive
+
+- Lasna reactive processing:
+  - Tx hash: `0x5ec4e40b1eb1a8143dea4dc64bc1542958edf3ec9d70ee06f82fd94f339a7269`
+  - Shows: the active Reactive contract on Lasna processed the Base risky approval and started the cross-chain response
+
+#### Destination
+
 - Base source-chain revoke:
   - Tx hash: `0x425d1b9ef07a5df0368aacf11b45053bc430556d955b43905166176557bec88b`
   - Shows: the Base module revoked the risky approval back to zero
@@ -117,9 +128,20 @@
 
 ### Ethereum Sepolia risk -> Ethereum revoke -> Base Shield -> automatic Shield exit
 
+#### Origin
+
 - Ethereum risky approval:
   - Tx hash: `0x22b133e84345c5e291ec57f89f3f4d38851a62ad90d8013567e5c45bb02cc5ce`
   - Shows: the shared Safe approved the blacklisted spender on Ethereum Sepolia
+
+#### Reactive
+
+- Lasna reactive processing:
+  - Tx hash: `0x2c82c55914c22eb9f00708bff55efcf0145e01f8f1e9012f8a22c84480722309`
+  - Shows: the active Reactive contract on Lasna processed the Ethereum risky approval and started the cross-chain response
+
+#### Destination
+
 - Ethereum source-chain revoke:
   - Tx hash: `0xb5cf5e2de1e12fbb97188614b633bbce046f008bc216b48ec8ef0660f996ea44`
   - Shows: the Ethereum module revoked the risky approval back to zero
@@ -146,6 +168,8 @@
 
 ## Final submission hashes
 
+Reactive hashes below were matched from the Lasna Reactscan contract transaction view for the active Reactive contract. They correspond to the rows whose `ORIGIN` column points to the risky approval transactions listed in the `Origin` section of each run.
+
 ### Funding
 
 - `0x54254531576c37b7a4edfc2452b2ef28dc0414b82020a140eb8e6931213a8561` — fund Ethereum module
@@ -153,14 +177,22 @@
 
 ### Run 1
 
-- `0xa2fbe10030e6569a81dca46fc465a2d938ce9e23ba950a95fe922d333a6d9e5d` — Base risky approval
-- `0x425d1b9ef07a5df0368aacf11b45053bc430556d955b43905166176557bec88b` — Base revoke
-- `0xb29622e0a1f5d216f391e17880ea11296713763210f0e7c9cdcd4355ca5c397b` — Ethereum Shield entered
-- `0x7e3dbe6ae88d9bff6d3ef32ea6ffd8b6d7e9505e2b0f58247282e637b01736bd` — Ethereum manual Shield exit
+- Origin:
+  - `0xa2fbe10030e6569a81dca46fc465a2d938ce9e23ba950a95fe922d333a6d9e5d` — Base risky approval
+- Reactive:
+  - `0x5ec4e40b1eb1a8143dea4dc64bc1542958edf3ec9d70ee06f82fd94f339a7269` — Lasna reactive processing for the Base risk
+- Destination:
+  - `0x425d1b9ef07a5df0368aacf11b45053bc430556d955b43905166176557bec88b` — Base revoke
+  - `0xb29622e0a1f5d216f391e17880ea11296713763210f0e7c9cdcd4355ca5c397b` — Ethereum Shield entered
+  - `0x7e3dbe6ae88d9bff6d3ef32ea6ffd8b6d7e9505e2b0f58247282e637b01736bd` — Ethereum manual Shield exit
 
 ### Run 2
 
-- `0x22b133e84345c5e291ec57f89f3f4d38851a62ad90d8013567e5c45bb02cc5ce` — Ethereum risky approval
-- `0xb5cf5e2de1e12fbb97188614b633bbce046f008bc216b48ec8ef0660f996ea44` — Ethereum revoke
-- `0x75f6a3d35116f0b5413248284a3002496a04baebfd32046c4b4231a65292681c` — Base Shield entered
-- `0x6c338cbab7f745c49796cc4b366ea069071a640ca59dd3a394b4b679368489e0` — Base automatic Shield exit
+- Origin:
+  - `0x22b133e84345c5e291ec57f89f3f4d38851a62ad90d8013567e5c45bb02cc5ce` — Ethereum risky approval
+- Reactive:
+  - `0x2c82c55914c22eb9f00708bff55efcf0145e01f8f1e9012f8a22c84480722309` — Lasna reactive processing for the Ethereum risk
+- Destination:
+  - `0xb5cf5e2de1e12fbb97188614b633bbce046f008bc216b48ec8ef0660f996ea44` — Ethereum revoke
+  - `0x75f6a3d35116f0b5413248284a3002496a04baebfd32046c4b4231a65292681c` — Base Shield entered
+  - `0x6c338cbab7f745c49796cc4b366ea069071a640ca59dd3a394b4b679368489e0` — Base automatic Shield exit
