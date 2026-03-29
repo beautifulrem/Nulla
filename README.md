@@ -68,7 +68,7 @@
 6. Exit Shield manually or automatically after the recovery window.
 
 ```mermaid
-flowchart TB
+flowchart LR
     subgraph ChainA["Business Chain A"]
         A1["Safe"]
         A2["ApprovalFirewallModule"]
@@ -77,6 +77,8 @@ flowchart TB
 
     subgraph Lasna["Reactive Network / Lasna"]
         R["ReactiveCrossChainFirewall"]
+        P["Risk Policy Evaluation"]
+        C["Recovery Window / Cron10"]
     end
 
     subgraph ChainB["Business Chain B"]
@@ -87,12 +89,21 @@ flowchart TB
 
     A1 -- "Risk Approval Event" --> R
     B1 -- "Risk Approval Event" --> R
+    R --> P
 
-    R -- "Revoke On Source Chain" --> A2
-    R -- "Enter Shield On Peer Chain" --> B3
+    P -- "Chain A is source" --> A2
+    P -- "Peer enters Shield" --> B3
+    P -- "Chain B is source" --> B2
+    P -- "Peer enters Shield" --> A3
 
-    R -- "Revoke On Source Chain" --> B2
-    R -- "Enter Shield On Peer Chain" --> A3
+    A2 -->|"Revoke approval"| A1
+    B2 -->|"Revoke approval"| B1
+    A3 -.->|"Block risky approvals"| A1
+    B3 -.->|"Block risky approvals"| B1
+
+    P --> C
+    C -->|"Automatic or manual exit"| A3
+    C -->|"Automatic or manual exit"| B3
 ```
 
 ## Guides
