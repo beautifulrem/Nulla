@@ -73,6 +73,59 @@ NO_PROXY="*" HTTP_PROXY="" HTTPS_PROXY="" ALL_PROXY="" forge test -vvv
 
 Do not move on to testnets if this step fails.
 
+## 2.1 Launch the local frontend demo
+
+If you want to present the demo from the frontend locally, use **production mode** by default.  
+It is more stable than `next dev` and avoids hot-reload cache issues during a live presentation.
+
+First build the frontend:
+
+```bash
+cd web
+npm install
+npm run build
+```
+
+Then start the frontend server:
+
+```bash
+npm run start -- --hostname 127.0.0.1 --port 3001
+```
+
+Open a second terminal window and launch the browser pages directly:
+
+```bash
+open http://127.0.0.1:3001/guardian/setup
+open http://127.0.0.1:3001/demo
+open http://127.0.0.1:3001/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
+```
+
+These pages are used for:
+
+- `/guardian/setup`
+  - Guardian Mode onboarding
+- `/demo`
+  - trigger risky approvals from frontend buttons
+- `/guardian/<profileId>`
+  - show dual-chain status, Shield Mode, timeline, and recovery
+
+If you only need quick UI iteration, you can also use development mode:
+
+```bash
+cd web
+npm run dev -- --hostname 127.0.0.1 --port 3000
+```
+
+Then open:
+
+```bash
+open http://127.0.0.1:3000/guardian/setup
+open http://127.0.0.1:3000/demo
+open http://127.0.0.1:3000/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
+```
+
+For recording or live judging, prefer the `3001` `next start` flow.
+
 ## 3. Deploy Ethereum Sepolia Business Contracts
 
 Deploy:

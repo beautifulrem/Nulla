@@ -73,6 +73,58 @@ NO_PROXY="*" HTTP_PROXY="" HTTPS_PROXY="" ALL_PROXY="" forge test -vvv
 
 如果这里不过，不要直接上测试网。
 
+## 2.1 启动本地前端 Demo 页面
+
+如果你想在本地直接用前端展示 demo，推荐使用 **production 模式**，比 `next dev` 更稳定，不容易被热更新缓存干扰。
+
+先进入前端目录并构建：
+
+```bash
+cd web
+npm install
+npm run build
+```
+
+然后启动前端服务：
+
+```bash
+npm run start -- --hostname 127.0.0.1 --port 3001
+```
+
+再开一个新的终端窗口，直接打开浏览器页面：
+
+```bash
+open http://127.0.0.1:3001/guardian/setup
+open http://127.0.0.1:3001/demo
+open http://127.0.0.1:3001/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
+```
+
+这 3 个页面分别用于：
+
+- `/guardian/setup`
+  - 展示 Guardian Mode onboarding
+- `/demo`
+  - 从前端按钮直接触发风险 approval
+- `/guardian/<profileId>`
+  - 展示双链状态、Shield、时间线和恢复结果
+
+如果你只是临时调样式，也可以用开发模式：
+
+```bash
+cd web
+npm run dev -- --hostname 127.0.0.1 --port 3000
+```
+
+然后打开：
+
+```bash
+open http://127.0.0.1:3000/guardian/setup
+open http://127.0.0.1:3000/demo
+open http://127.0.0.1:3000/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
+```
+
+但真正录屏或现场展示时，优先用 `3001` 的 `next start`。
+
 ## 3. 部署 Ethereum Sepolia 业务合约
 
 部署：
