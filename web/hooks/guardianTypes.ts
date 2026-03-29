@@ -77,6 +77,8 @@ export type OnboardGuardianInput = {
 };
 
 export type OnboardGuardianResult = {
+  status?: "created" | "reused";
+  resumeFrom?: "deploy" | "register" | "enable-safe" | "ready";
   profileId: string;
   moduleEth: string;
   moduleBase: string;

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useGuardianSetupForm } from "../../hooks/useGuardianSetupForm";
+import { useGuardianStatus } from "../../hooks/useGuardianStatus";
 import { useOnboardGuardian } from "../../hooks/useOnboardGuardian";
 import { OnboardingForm } from "./OnboardingForm";
 import { NextActionsPanel } from "./NextActionsPanel";
@@ -9,7 +10,7 @@ import { GuardianModeCard } from "./GuardianModeCard";
 import { PolicySummary } from "./PolicySummary";
 import { card, cardGlow, cardInner, contentWrap, eyebrow, grid2, grid3, monoWrap, pageShell, primaryButton, subtitle, title } from "./ui";
 import { DEMO_OWNER_ADDRESS, DEMO_POLICY_TITLE, DEMO_SAFE_ADDRESS } from "../../hooks/guardianTypes";
-import { DEFAULT_RISK_SPENDER } from "../../lib/constants";
+import { DEFAULT_RISK_SPENDER, DEMO_PROFILE_ID } from "../../lib/constants";
 
 export function GuardianSetupScreen() {
   const { form, updateField, updateListField, addListItem, removeListItem } = useGuardianSetupForm({
@@ -20,6 +21,25 @@ export function GuardianSetupScreen() {
     blacklist: [DEFAULT_RISK_SPENDER],
   });
   const { data, error, loading, submit } = useOnboardGuardian();
+  const activeProfileId = data?.profileId ?? DEMO_PROFILE_ID;
+  const liveStatus = useGuardianStatus(activeProfileId);
+  const liveBadgeMode =
+    liveStatus.data?.shieldEth || liveStatus.data?.shieldBase ? "SHIELD" : "MONITOR";
+  const statusLabel = error
+    ? error
+    : loading
+      ? "Composing Guardian Mode..."
+      : liveStatus.loading && !data?.profileId
+        ? "Refreshing live chain state..."
+      : data?.resumeFrom === "ready"
+        ? "This Safe is already configured on both chains and ready for the live demo."
+        : liveStatus.data?.shieldEth || liveStatus.data?.shieldBase
+          ? "A live Shield is active on one chain. Open the security console to inspect or clear it."
+        : data?.profileId
+          ? data.nextActions.length
+            ? "Profile created. Review the exact Safe actions below."
+            : "Guardian Mode is configured and ready."
+          : "Waiting for onboarding submission";
 
   return (
     <div style={pageShell}>
@@ -56,10 +76,10 @@ export function GuardianSetupScreen() {
           />
           <div style={{ display: "grid", gap: 18 }}>
             <GuardianModeCard
-              armed={Boolean(data?.profileId)}
-              profileId={data?.profileId ?? undefined}
-              statusLabel={error ?? "Waiting for onboarding submission"}
-              badgeMode="MONITOR"
+              armed={Boolean(data?.profileId ?? liveStatus.data?.armed)}
+              profileId={activeProfileId}
+              statusLabel={statusLabel}
+              badgeMode={liveBadgeMode}
             />
             <PolicySummary safeAddress={form.safeAddress} ownerAddress={form.ownerAddress} policyTitle={DEMO_POLICY_TITLE} />
             <section style={card}>

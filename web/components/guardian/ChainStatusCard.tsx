@@ -14,6 +14,8 @@ type Props = {
   onManualExit?: (chainId: number, alertId: string) => Promise<void>;
 };
 
+const ZERO_ALERT_ID = `0x${"0".repeat(64)}`;
+
 export function ChainStatusCard({ chain, lasnaRuntime, alertId, onManualExit }: Props) {
   const chainMeta = getChainMetadata(chain.chainId);
   const [exiting, setExiting] = useState(false);
@@ -55,7 +57,7 @@ export function ChainStatusCard({ chain, lasnaRuntime, alertId, onManualExit }: 
           <StatusLine label="Module" value={formatAddress(chain.moduleAddress)} mono />
           <StatusLine label="Last tx" value={formatAddress(chain.lastTxHash, 8, 6)} mono />
         </div>
-        {chain.guardMode === "SHIELD" && alertId && onManualExit ? (
+        {chain.guardMode === "SHIELD" && onManualExit ? (
           <div style={{ display: "grid", gap: 10 }}>
             <button
               type="button"
@@ -64,7 +66,7 @@ export function ChainStatusCard({ chain, lasnaRuntime, alertId, onManualExit }: 
                 setExiting(true);
                 setLocalError(null);
                 try {
-                  await onManualExit(chain.chainId, alertId);
+                  await onManualExit(chain.chainId, alertId ?? ZERO_ALERT_ID);
                 } catch (error) {
                   setLocalError(error instanceof Error ? error.message : "Failed to exit Shield mode.");
                 } finally {
