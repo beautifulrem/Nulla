@@ -688,7 +688,6 @@ Or update manually:
 - `.env`
 - `web/.env.local`
 - `deployments/nulla-demo.json`
-- `deployments/summary.md`
 - `deployments/hackathon-final-submit.md`
 
 ## 18. Notes and Troubleshooting

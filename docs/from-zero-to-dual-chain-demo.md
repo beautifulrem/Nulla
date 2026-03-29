@@ -674,7 +674,6 @@ forge script script/ExportDeploymentManifest.s.sol:ExportDeploymentManifest --rp
 - `.env`
 - `web/.env.local`
 - `deployments/nulla-demo.json`
-- `deployments/summary.md`
 - `deployments/hackathon-final-submit.md`
 
 ## 18. 说明与排障建议
