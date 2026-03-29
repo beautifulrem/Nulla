@@ -38,6 +38,8 @@
 - 🚀 [English Demo Guide](./docs/from-zero-to-dual-chain-demo.en.md)
 - 🇨🇳 [中文双链测试流程](./docs/from-zero-to-dual-chain-demo.md)
 - 🎯 [Hackathon Final Submission](./deployments/hackathon-final-submit.md)
+- 📽️ [Demo Video](https://www.youtube.com/watch?v=YxFQ8aBQri0)
+- 🖥️ [Demo Slides](https://docs.google.com/presentation/d/1-o0GCHv06zMuO-JwtUTMWuHzLi8oaIuM/edit?usp=drive_link&ouid=113133240101784315644&rtpof=true&sd=true)
 
 ## Table of Contents
 
