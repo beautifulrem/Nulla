@@ -14,6 +14,15 @@ out/
 .env
 web/.env.local
 
+# Local AI / agent metadata
+AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+memory.md
+.agents/
+.claude/
+.codex/
+
 # Frontend build artifacts
 web/node_modules/
 web/.next/
