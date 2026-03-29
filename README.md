@@ -67,6 +67,34 @@
 5. Enter Shield Mode on the peer chain.
 6. Exit Shield manually or automatically after the recovery window.
 
+```mermaid
+flowchart TB
+    subgraph ChainA["Business Chain A"]
+        A1["Safe"]
+        A2["ApprovalFirewallModule"]
+        A3["ShieldGuard"]
+    end
+
+    subgraph Lasna["Reactive Network / Lasna"]
+        R["ReactiveCrossChainFirewall"]
+    end
+
+    subgraph ChainB["Business Chain B"]
+        B1["Safe"]
+        B2["ApprovalFirewallModule"]
+        B3["ShieldGuard"]
+    end
+
+    A1 -- "Risk Approval Event" --> R
+    B1 -- "Risk Approval Event" --> R
+
+    R -- "Revoke On Source Chain" --> A2
+    R -- "Enter Shield On Peer Chain" --> B3
+
+    R -- "Revoke On Source Chain" --> B2
+    R -- "Enter Shield On Peer Chain" --> A3
+```
+
 ## Guides
 
 - [English end-to-end demo guide](./docs/from-zero-to-dual-chain-demo.en.md)
