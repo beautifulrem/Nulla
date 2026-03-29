@@ -19,14 +19,8 @@
   <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-f1c40f">
   <img alt="Chains Ethereum Sepolia + Base Sepolia" src="https://img.shields.io/badge/Chains-Ethereum%20Sepolia%20%2B%20Base%20Sepolia-2980b9">
   <img alt="Reactive Network Lasna" src="https://img.shields.io/badge/Reactive-Lasna-8e44ad">
-  <img alt="Safe approval firewall" src="https://img.shields.io/badge/Safe-approval%20firewall-27ae60">
+  <img alt="Safe Smart Wallet" src="https://img.shields.io/badge/Safe-approval%20firewall-27ae60">
   <img alt="Frontend Next.js" src="https://img.shields.io/badge/Frontend-Next.js-111111">
-</p>
-
-<p align="center">
-  <img alt="Demo same address Safe" src="https://img.shields.io/badge/Demo-Same--address%20Safe-34495e">
-  <img alt="Recovery manual and automatic" src="https://img.shields.io/badge/Recovery-manual%20%2B%20automatic-e67e22">
-  <img alt="Execution Reactive + Safe" src="https://img.shields.io/badge/Execution-Reactive%20%2B%20Safe-16a085">
 </p>
 
 <p>
@@ -40,7 +34,6 @@
 - 🚀 [English Demo Guide](./docs/from-zero-to-dual-chain-demo.en.md)
 - 🇨🇳 [中文双链测试流程](./docs/from-zero-to-dual-chain-demo.md)
 - 🎯 [Hackathon Final Submission](./deployments/hackathon-final-submit.md)
-- 🧾 [Demo Evidence](./deployments/demo-evidence.md)
 
 ## Table of Contents
 
@@ -82,8 +75,8 @@
 ## Local Commands
 
 ```bash
-rtk forge build
-rtk forge test -vvv
-cd web && rtk npm run typecheck
-cd web && rtk npm run build
+forge build
+forge test -vvv
+cd web && npm run typecheck
+cd web && npm run build
 ```
