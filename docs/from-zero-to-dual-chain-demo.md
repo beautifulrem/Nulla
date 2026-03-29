@@ -1,15 +1,16 @@
-# Nulla: 从零部署到双链测试流程
+# Nulla：安装、部署与验证指南
 
-这份文档基于当前仓库和现有脚本，给出一条可执行的流程：
+这份文档面向任何希望在本地或测试网上复现本项目的人，包括贡献者、评委以及需要完整运行本系统的开发者。
 
-1. 准备环境变量  
-2. 部署 Ethereum Sepolia / Base Sepolia 业务合约  
-3. 部署 Lasna Reactive 合约  
-4. 给 Reactive 合约和 callback 合约补资金  
-5. 启用 Safe 的 module / guard  
-6. 为 Reactive 合约挂上双链 `Approval` 订阅  
-7. 运行正向 / 反向双链测试  
-8. 清理旧 RC 或重部署新 RC
+完成本文档后，你将能够：
+
+1. 配置运行所需环境变量
+2. 部署 Ethereum Sepolia、Base Sepolia 与 Lasna 上的合约
+3. 在两条业务链上接入 Safe 的 module 和 guard
+4. 激活跨链 `Approval` 订阅
+5. 验证正向与反向两条保护链路
+
+这是一份安装、部署和验证文档，不是演示脚本。
 
 ## 0. 前提
 
@@ -73,9 +74,9 @@ NO_PROXY="*" HTTP_PROXY="" HTTPS_PROXY="" ALL_PROXY="" forge test -vvv
 
 如果这里不过，不要直接上测试网。
 
-## 2.1 启动本地前端 Demo 页面
+## 2.1 启动本地前端页面
 
-如果你想在本地直接用前端展示 demo，推荐使用 **production 模式**，比 `next dev` 更稳定，不容易被热更新缓存干扰。
+如果你想在本地通过前端检查项目状态，推荐使用 **production 模式**，比 `next dev` 更稳定，也更适合做端到端验证。
 
 先进入前端目录并构建：
 
@@ -99,12 +100,12 @@ open http://127.0.0.1:3001/demo
 open http://127.0.0.1:3001/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
 ```
 
-这 3 个页面分别用于：
+这 3 个页面分别适合用于本地检查：
 
 - `/guardian/setup`
   - 展示 Guardian Mode onboarding
 - `/demo`
-  - 从前端按钮直接触发风险 approval
+  - 从前端控件直接触发风险 approval
 - `/guardian/<profileId>`
   - 展示双链状态、Shield、时间线和恢复结果
 
@@ -123,7 +124,7 @@ open http://127.0.0.1:3000/demo
 open http://127.0.0.1:3000/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
 ```
 
-但真正录屏或现场展示时，优先用 `3001` 的 `next start`。
+为了得到更稳定的本地运行结果，优先使用 `3001` 的 `next start`。
 
 ## 3. 部署 Ethereum Sepolia 业务合约
 
@@ -377,7 +378,7 @@ set -a && source .env && set +a
 cast send $BASE_TOKEN_ADDRESS "mint(address,uint256)" $DEMO_SAFE_SHARED_ADDRESS 1000000000 --private-key $DEMO_SAFE_OWNER_PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 ```
 
-## 12. 正向链路测试
+## 12. 验证 Base -> Ethereum 保护链路
 
 目标：
 
@@ -505,7 +506,7 @@ function rpcProvider(url) {
 NODE'
 ```
 
-## 14. 验证 `Cron10` 按需订阅和自动退出
+## 14. 验证 `Cron10` 恢复流程
 
 先看当前订阅表：
 
@@ -538,7 +539,7 @@ cast call $ETH_GUARD_ADDRESS "shieldUntilTick()(uint64)" --rpc-url $ETH_SEPOLIA_
 
 ### 手动退出 Shield 兜底命令
 
-如果你在现场演示时不想等待 `Cron10`，或者需要在调试时立刻把 `Shield Mode` 清掉，可以直接手动调用对应链上的 guard：
+如果你在测试时不想等待 `Cron10`，或者需要在调试时立刻把 `Shield Mode` 清掉，可以直接手动调用对应链上的 guard：
 
 Ethereum Sepolia:
 
@@ -577,7 +578,7 @@ cast call $BASE_GUARD_ADDRESS "shieldUntilTick()(uint64)" --rpc-url $BASE_SEPOLI
 - `mode = 0`
 - `shieldUntilTick = 0`
 
-## 15. 反向链路测试
+## 15. 验证 Ethereum -> Base 保护链路
 
 目标：
 
@@ -642,7 +643,7 @@ cast call $BASE_GUARD_ADDRESS "mode()(uint8)" --rpc-url $BASE_SEPOLIA_RPC_URL
 cast call $BASE_GUARD_ADDRESS "shieldUntilTick()(uint64)" --rpc-url $BASE_SEPOLIA_RPC_URL
 ```
 
-## 16. 清理旧 RC
+## 16. 清理旧 RC（可选）
 
 如果要替换主线 RC，先退掉旧 RC 的所有订阅，再部署新的。
 
@@ -676,7 +677,7 @@ forge script script/ExportDeploymentManifest.s.sol:ExportDeploymentManifest --rp
 - `deployments/summary.md`
 - `deployments/hackathon-final-submit.md`
 
-## 18. 关键经验
+## 18. 说明与排障建议
 
 - **Reactive 合约在 Lasna 上必须用 `forge create` 部署**
 - **Reactive 合约至少预充 `3 REACT`**

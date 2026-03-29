@@ -1,15 +1,16 @@
-# Nulla: End-to-End Deployment and Dual-Chain Test Guide
+# Nulla: Installation, Deployment, and Verification Guide
 
-This document describes a practical end-to-end flow for this repository:
+This guide is for anyone who wants to reproduce the project locally or on the supported testnets, including contributors, judges, and developers evaluating the system.
 
-1. Prepare environment variables  
-2. Deploy Ethereum Sepolia and Base Sepolia business contracts  
-3. Deploy the Lasna Reactive contract  
-4. Fund the Reactive contract and callback contracts  
-5. Enable the Safe module and guard  
-6. Activate dual-chain `Approval` subscriptions  
-7. Run forward and reverse path tests  
-8. Clean up old RCs or redeploy a new one
+By the end of this guide you will have:
+
+1. configured the required environment variables
+2. deployed the Ethereum Sepolia, Base Sepolia, and Lasna contracts
+3. connected the Safe module and guard on both chains
+4. activated cross-chain `Approval` subscriptions
+5. verified forward-path and reverse-path protection flows
+
+Use this document as a practical setup and verification reference, not as a presentation script.
 
 ## 0. Prerequisites
 
@@ -73,10 +74,10 @@ NO_PROXY="*" HTTP_PROXY="" HTTPS_PROXY="" ALL_PROXY="" forge test -vvv
 
 Do not move on to testnets if this step fails.
 
-## 2.1 Launch the local frontend demo
+## 2.1 Run the local web application
 
-If you want to present the demo from the frontend locally, use **production mode** by default.  
-It is more stable than `next dev` and avoids hot-reload cache issues during a live presentation.
+If you want to inspect the project from the frontend locally, use **production mode** by default.  
+It is more stable than `next dev` and avoids hot-reload cache issues during end-to-end verification.
 
 First build the frontend:
 
@@ -100,12 +101,12 @@ open http://127.0.0.1:3001/demo
 open http://127.0.0.1:3001/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
 ```
 
-These pages are used for:
+These pages are useful during local verification:
 
 - `/guardian/setup`
   - Guardian Mode onboarding
 - `/demo`
-  - trigger risky approvals from frontend buttons
+  - trigger risky approvals from frontend controls
 - `/guardian/<profileId>`
   - show dual-chain status, Shield Mode, timeline, and recovery
 
@@ -124,7 +125,7 @@ open http://127.0.0.1:3000/demo
 open http://127.0.0.1:3000/guardian/0xe5fd559fcb5fd437c4efdfabfe7138e5ef4a92912bf3c7c2d170292cf5e322c9
 ```
 
-For recording or live judging, prefer the `3001` `next start` flow.
+For stable local checks, prefer the `3001` `next start` flow.
 
 ## 3. Deploy Ethereum Sepolia Business Contracts
 
@@ -364,7 +365,7 @@ You should eventually see both:
 - `chainId = 11155111`, `topic0 = Approval`, `topic2 = risky spender`
 - `chainId = 84532`, `topic0 = Approval`, `topic2 = risky spender`
 
-## 11. Prepare Test Assets
+## 11. Seed Test Assets
 
 Mint some `MockUSDC` to the Safe on both chains:
 
@@ -378,7 +379,7 @@ set -a && source .env && set +a
 cast send $BASE_TOKEN_ADDRESS "mint(address,uint256)" $DEMO_SAFE_SHARED_ADDRESS 1000000000 --private-key $DEMO_SAFE_OWNER_PRIVATE_KEY --rpc-url $BASE_SEPOLIA_RPC_URL
 ```
 
-## 12. Forward Path Test
+## 12. Verify the Base-to-Ethereum Protection Path
 
 Goal:
 
@@ -454,7 +455,7 @@ Expected:
 - `mode = 1`
 - `shieldUntilTick > 0`
 
-## 13. Verify Shield Rejection
+## 13. Verify Shield Enforcement
 
 While ETH is in `Shield`, send an approval to an unknown spender.  
 Expected result: the Safe execution is rejected by the guard.
@@ -508,7 +509,7 @@ function rpcProvider(url) {
 NODE
 ```
 
-## 14. Verify Cron10 On-Demand Subscription and Auto Exit
+## 14. Verify Cron10 Subscription and Recovery
 
 While shield is active, inspect the current subscriptions:
 
@@ -552,7 +553,7 @@ Expected after exit:
 
 ### Manual Shield Exit Fallback
 
-If you do not want to wait for `Cron10` during a live demo, or if you need a debugging shortcut, you can manually clear `Shield Mode` on the target chain.
+If you do not want to wait for `Cron10` during testing, or if you need a debugging shortcut, you can manually clear `Shield Mode` on the target chain.
 
 Ethereum Sepolia:
 
@@ -591,7 +592,7 @@ Expected:
 - `mode = 0`
 - `shieldUntilTick = 0`
 
-## 15. Reverse Path Test
+## 15. Verify the Ethereum-to-Base Protection Path
 
 Goal:
 
@@ -656,7 +657,7 @@ cast call $BASE_GUARD_ADDRESS "mode()(uint8)" --rpc-url $BASE_SEPOLIA_RPC_URL
 cast call $BASE_GUARD_ADDRESS "shieldUntilTick()(uint64)" --rpc-url $BASE_SEPOLIA_RPC_URL
 ```
 
-## 16. Unsubscribe an Old RC
+## 16. Remove an Old RC Subscription Set (Optional Cleanup)
 
 If you need to replace an old RC, unsubscribe it first:
 
@@ -673,7 +674,7 @@ curl -s https://lasna-rpc.rnk.dev/ \
   --data "{\"jsonrpc\":\"2.0\",\"method\":\"rnk_getSubscribers\",\"params\":[\"$DEMO_SAFE_OWNER_ADDRESS\"],\"id\":1}"
 ```
 
-## 17. Export the Deployment Manifest
+## 17. Export Deployment Metadata
 
 If you want to sync addresses to the web app:
 
@@ -690,7 +691,7 @@ Or update manually:
 - `deployments/summary.md`
 - `deployments/hackathon-final-submit.md`
 
-## 18. Key Lessons
+## 18. Notes and Troubleshooting
 
 - **Deploy Lasna Reactive contracts with `forge create`, not `forge script`**
 - **Fund every active Reactive contract with at least `3 REACT`**
