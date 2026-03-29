@@ -28,3 +28,7 @@ web/node_modules/
 web/.next/
 web/test-results/
 web/tsconfig.tsbuildinfo
+web/tsconfig.typecheck.tsbuildinfo
+
+# Local binary presentation files
+hackathon.pptx
