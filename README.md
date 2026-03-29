@@ -1,6 +1,10 @@
-# Nulla
+<p align="center">
+  <img src="./docs/brand/Nulla.webp" alt="Nulla logo" width="148" />
+</p>
 
-<p>
+<h1 align="center">Nulla</h1>
+
+<p align="center">
   <strong>Detect once. Defend across chains.</strong>
 </p>
 
